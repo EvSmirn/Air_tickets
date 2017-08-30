@@ -95,7 +95,8 @@ function berlogic_check_errors(&$result,&$response,$action) {
   $response="<$action>\n".$m[1]."</$action>\n";
   return false;
 }
- error_reporting( E_ERROR );
+ //-----------------------------------------------------получение данных из ticket.php ----------------------  
+    error_reporting( E_ERROR );
    include 'searchFlights.php';
    //include 'ticket.php';
    $s_serviceClass=$_POST['serviceClass'];
@@ -104,6 +105,7 @@ function berlogic_check_errors(&$result,&$response,$action) {
    $s_adult=$_POST['value1'];
    $s_child=$_POST['value2'];
    $s_infant=$_POST['value3'];
+   //$s_date=$_POST['date'];
 
    $xml = new SimpleXMLElement($xmlstr);
    $ns = $xml->getNamespaces(true);
@@ -114,9 +116,10 @@ function berlogic_check_errors(&$result,&$response,$action) {
    $adult = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[0]->value=$s_adult;
    $child = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[1]->value=$s_child;
    $infant = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[2]->value=$s_infant;
+  // $date = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->route->date->value=date('Y-m-dTH:i:sZ',strtotime($s_date));
 
    
-   $xml->saveXML("Ticket.xml");error_reporting( E_ERROR );
+   $xml->saveXML("Ticket.xml");
  
     $result=array();
    $xml=file_get_contents(dirname(__FILE__).'/Ticket.xml');
@@ -132,53 +135,90 @@ function berlogic_check_errors(&$result,&$response,$action) {
    $data=newelements2array($response,'return',false,true);
 
       header('Content-type: text/html; charset=utf-8');
-     echo 'Авиа Билеты';
-  echo '<table class="table_blur"  cellpadding="5" cellspacing="0" border="1">';
-     echo '<tr><th>Категория пассажира</th><th>Сбор</th><th>Цена билета</th><th>Налог</th><th>Аэропорт вылета</th><th>Дата/Время</th><th>Самолет</th></tr>';
+      echo '<div style="text-align: center; color: darkslateblue; font-size: 2em; font-style: italic; font-weight: bold;">Авиабилеты</div>';
+  echo '<table style="align: center" class="table_blur"  cellpadding="5" cellspacing="0" border="1">';
+     echo '<tr><th>Категория пассажира</th><th>Сбор</th><th>Цена билета</th><th>Налог</th><th>Аэропорт вылета</th><th>Аэропорт прилета</th><th>Дата/Время</th><th>Мест</th><th>Самолет</th></tr>';
 
      foreach ($data as $key => $value) {
-     if ($s_beginLocation=='MOW'){
+    //Если летим из Санкт-Петербурга
+         if ($s_beginLocation=='LED'){
          if ($s_child==0){
-   
-echo "<tr><td>".$value['cost']['elements']['category']."</td><td>".
-        $value['cost']['elements']['fee']."</td><td>".
-        $value['cost']['elements']['tariff']."</td><td>".
-        $value['cost']['elements']['taxes']."</td><td>".
-        $value['segments']['beginlocation']['displaycode']."</td><td>".
-        $value['segments']['begindate']."</td><td>".
-        $value['segments']['operatingvendor']['displaycode']."</td></tr>"
-        ;
-     }
-     else {
-         echo "<tr><td>".$value['cost']['elements'][0]['category']."</td><td>".
-        $value['cost']['elements'][0]['fee']."</td><td>".
-        $value['cost']['elements'][0]['tariff']."</td><td>".
-        $value['cost']['elements'][0]['taxes']."</td><td>".
-        $value['segments']['beginlocation']['displaycode']."</td><td>".
-        $value['segments']['begindate']."</td><td>".
-        $value['segments']['operatingvendor']['displaycode']."</td></tr>".
-       
-        "<tr><td>".$value['cost']['elements'][1]['category']."</td><td>".
-        $value['cost']['elements'][1]['fee']."</td><td>".
-        $value['cost']['elements'][1]['tariff']."</td><td>".
-        $value['cost']['elements'][1]['taxes']."</td><td>".
-        $value['segments']['beginlocation']['displaycode']."</td><td>".
-        $value['segments']['begindate']."</td><td>".
-        $value['segments']['operatingvendor']['displaycode']."</td></tr>"
-        ;
-     }
-     }
-     else {
-      echo "<tr><td>".$value['cost']['elements'][0]['category']."</td><td>".
+             echo "<tr><td>".$value['cost']['elements']['category']='Взрослый'."</td><td>".
         $value['cost']['elements']['fee']."</td><td>".
         $value['cost']['elements']['tariff']."</td><td>".
         $value['cost']['elements']['taxes']."</td><td>".
         $value['segments'][0]['beginlocation']['displaycode']."</td><td>".
-        $value['segments'][0]['begindate']."</td><td>".
+        $value['segments'][0]['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments'][0]['begindate']))."</td><td>".
+        $value['segments'][0]['seats']."</td><td>".
         $value['segments'][0]['operatingvendor']['displaycode']."</td></tr>"
         ;
  }
+ else {
+        echo "<tr><td>".$value['cost']['elements'][0]['category']='Взрослый'."</td><td>".
+        $value['cost']['elements'][0]['fee']."</td><td>".
+        $value['cost']['elements'][0]['tariff']."</td><td>".
+        $value['cost']['elements'][0]['taxes']."</td><td>".
+        $value['segments'][0]['beginlocation']['displaycode']."</td><td>".
+        $value['segments'][0]['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments'][0]['begindate']))."</td><td>".
+        $value['segments'][0]['seats']."</td><td>".
+        $value['segments'][0]['operatingvendor']['displaycode']."</td></tr>".
+       
+        "<tr><td>".$value['cost']['elements'][1]['category']='Ребенок'."</td><td>".
+        $value['cost']['elements'][1]['fee']."</td><td>".
+        $value['cost']['elements'][1]['tariff']."</td><td>".
+        $value['cost']['elements'][1]['taxes']."</td><td>".
+        $value['segments'][0]['beginlocation']['displaycode']."</td><td>".
+        $value['segments'][0]['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments'][0]['begindate']))."</td><td>".
+        $value['segments'][0]['seats']."</td><td>".
+        $value['segments'][0]['operatingvendor']['displaycode']."</td></tr>"
+        ;
+ }
+ 
+         }
+          //Если летим из др города
+     else {
+   //Если летят только взрослые
+          if ($s_child==0) {
+echo "<tr><td>".$value['cost']['elements']['category']='Взрослый'."</td><td>".
+        $value['cost']['elements']['fee']."</td><td>".
+        $value['cost']['elements']['tariff']."</td><td>".
+        $value['cost']['elements']['taxes']."</td><td>".
+        $value['segments']['beginlocation']['displaycode']."</td><td>".
+        $value['segments']['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments']['begindate']))."</td><td>".
+        $value['segments']['seats']."</td><td>".
+        $value['segments']['operatingvendor']['displaycode']."</td></tr>"
+        ;
      }
+     else {
+         echo "<tr><td>".$value['cost']['elements'][0]['category']='Взрослый'."</td><td>".
+        $value['cost']['elements'][0]['fee']."</td><td>".
+        $value['cost']['elements'][0]['tariff']."</td><td>".
+        $value['cost']['elements'][0]['taxes']."</td><td>".
+        $value['segments']['beginlocation']['displaycode']."</td><td>".
+        $value['segments']['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments']['begindate']))."</td><td>".
+        $value['segments']['seats']."</td><td>".
+        $value['segments']['operatingvendor']['displaycode']."</td></tr>".
+       
+        "<tr><td>".$value['cost']['elements'][1]['category']='Ребенок'."</td><td>".
+        $value['cost']['elements'][1]['fee']."</td><td>".
+        $value['cost']['elements'][1]['tariff']."</td><td>".
+        $value['cost']['elements'][1]['taxes']."</td><td>".
+        $value['segments']['beginlocation']['displaycode']."</td><td>".
+        $value['segments']['endlocation']['displaycode']."</td><td>".
+        date('H:i:s',strtotime($value['segments']['begindate']))."</td><td>".
+        $value['segments']['seats']."</td><td>".
+        $value['segments']['operatingvendor']['displaycode']."</td></tr>"
+        ;
+     }
+     }
+     }
+   
+     
 
 echo "</table>";
   

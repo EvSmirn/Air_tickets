@@ -4,12 +4,20 @@
 <meta charset="UTF-8">
         <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css'/>
         <link rel="stylesheet" href="css/style_index.css"/>
+   <!--  Cкрипт для ДАТЫ   <link rel="stylesheet" href="css/date_input.css" type="text/css">
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.date_input.js"></script>
+        <script type="text/javascript">$($.date_input.initialize);</script>-->
 </head> 
 <body> 
 <?php
     include 'DB.php';
     $db = mysqli_connect ($host, $bd_user, $pass , $bd_name);
-    mysqli_select_db ($db, $bd_name);
+    if (!$db) {
+    die("Невозможно подключиться к MySQL: " . mysqli_error());
+}
+    mysqli_select_db ($db, $bd_name)
+    or die("Невозможно выбрать базу данных: " . mysqli_error());
     
     if (isset($_POST['login'])) { $login = $_POST['login']; if ($login == '') { unset($login);} } //заносим введенный пользователем логин в переменную $login, если он пустой, то уничтожаем переменную
     if (isset($_POST['password'])) { $password=$_POST['password']; if ($password =='') { unset($password);} }
@@ -62,14 +70,30 @@ $result = mysqli_query($db, "SELECT * FROM users WHERE login='$login'"); //из�
     <option value="ECONOM">Эконом</option>
     <option  value="BUSINESS">Бизнесс</option>
     </select>
-    <select name="beginLocation" class="form-control" >
+    <?php
+$sql2 = "SELECT * FROM airports";
+$result_select2 = mysqli_query($db, $sql2);
+echo "<select name='beginLocation' class='form-control'>";
+while($object = mysqli_fetch_object($result_select2)){
+echo "<option value = '$object->code' > $object->name_rus</option>";
+}
+echo "</select>";
+$sql3 = "SELECT * FROM airports";
+$result_select3 = mysqli_query($db, $sql3);
+echo "<select name='endLocation' class='form-control'>";
+while($object = mysqli_fetch_object($result_select3)){
+echo "<option value = '$object->code' > $object->name_rus</option>";
+}
+echo "</select>";
+?> 
+  <!--  <select name="beginLocation" class="form-control" >
     <option value="LED">Санкт-Петербург</option>
     <option  value="MOW">Москва</option>
     </select>
     <select name="endLocation" class="form-control" >
     <option  value="MOW">Москва</option>
     <option value="LED">Санкт-Петербург</option>
-    </select>
+    </select>-->
     Взрослых
     <select name="value1" class="form-control" >
     <option  value="1">1</option>
@@ -90,8 +114,12 @@ $result = mysqli_query($db, "SELECT * FROM users WHERE login='$login'"); //из�
     <option value="2">2</option>
     <option value="3">3</option>
     </select>
-   
-       <input type="submit" value="Поиск" name="submit" class="btn btn-lg btn-primary btn-block"/>
+    <!-- Выберите дату 
+ <p>
+    <input type="text" name="date" class="date_input">
+    </p> -->
+    
+    <input type="submit" value="Поиск" name="submit" class="btn btn-lg btn-primary btn-block"/>
     </form>
          </div>
 </body> 
