@@ -7,15 +7,7 @@
     </head>
     <body>
 <?php
-
-define('BERLOGIC_AVIA_URL','https://devlt.berlogic.de/Partner/Avia/v3');
-
-define('BERLOGIC_AGENCY','pulkovoairport');
-define('BERLOGIC_AGENT_CODE','pulkovoairport');
-define('BERLOGIC_SALES_POINT','pulkovoairport');
-define('BERLOGIC_PASSWORD','KG=bR5C8zrW2!');
-
-//include 'ticket.php';
+include 'Berlogic.php';
 function newObj2Array($obj) {
   $out = array();
   $obj = (array)$obj;
@@ -97,32 +89,24 @@ function berlogic_check_errors(&$result,&$response,$action) {
 }
  //-----------------------------------------------------получение данных из ticket.php ----------------------  
     error_reporting( E_ERROR );
-   include 'searchFlights.php';
-   //include 'ticket.php';
+ 
    $s_serviceClass=$_POST['serviceClass'];
    $s_beginLocation=$_POST['beginLocation'];
    $s_endLocation=$_POST['endLocation'];
    $s_adult=$_POST['value1'];
    $s_child=$_POST['value2'];
    $s_infant=$_POST['value3'];
-   //$s_date=$_POST['date'];
-
-   $xml = new SimpleXMLElement($xmlstr);
-   $ns = $xml->getNamespaces(true);
-    
-   $serviceClass = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->serviceClass = $s_serviceClass;
-   $beginLocation = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->route->beginLocation=$s_beginLocation;
-   $endLocation = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->route->endLocation=$s_endLocation;
-   $adult = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[0]->value=$s_adult;
-   $child = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[1]->value=$s_child;
-   $infant = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->seats->entry[2]->value=$s_infant;
-  // $date = $xml->children($ns['S'])->Body->children($ns['ns2'])->searchFlights->children($ns[''])->settings->route->date->value=date('Y-m-dTH:i:sZ',strtotime($s_date));
-
+   $s_date= $_POST['date'];
+   $s_date2= $_POST['date2'];
    
-   $xml->saveXML("Ticket.xml");
+   include 'searchFlights.php';
+   $newsXML = new SimpleXMLElement($xmlstr);
+   Header('Content-type: text/xml');
+   $newsXML->saveXML("Ticket2.xml");
+   
  
     $result=array();
-   $xml=file_get_contents(dirname(__FILE__).'/Ticket.xml');
+   $xml=file_get_contents(dirname(__FILE__).'/Ticket2.xml');
    //$xml->$s_xml;
    $response=berlogic_searchFlights($xml);
 
@@ -135,8 +119,8 @@ function berlogic_check_errors(&$result,&$response,$action) {
    $data=newelements2array($response,'return',false,true);
 
       header('Content-type: text/html; charset=utf-8');
-      echo '<div style="text-align: center; color: darkslateblue; font-size: 2em; font-style: italic; font-weight: bold;">Авиабилеты</div>';
-  echo '<table style="align: center" class="table_blur"  cellpadding="5" cellspacing="0" border="1">';
+      echo '<div style="text-align: center; color: darkslateblue; font-size: 2em; font-style: italic; font-weight: bold;">Авиабилеты на '.date_create($s_date)->Format('d-m-Y').'</div>';
+  echo '<table class="table_blur"  cellpadding="5" cellspacing="0" border="1">';
      echo '<tr><th>Категория пассажира</th><th>Сбор</th><th>Цена билета</th><th>Налог</th><th>Аэропорт вылета</th><th>Аэропорт прилета</th><th>Дата/Время</th><th>Мест</th><th>Самолет</th></tr>';
 
      foreach ($data as $key => $value) {

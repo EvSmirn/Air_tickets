@@ -9,7 +9,7 @@
     <body>
     <h2 align="center">Регистрация</h2>
   <?php 
-include 'DB.php';
+include 'BD.php';
 $db_server = mysqli_connect($host, $bd_user, $pass, $bd_name);
 if (!$db_server) {
     die("Невозможно подключиться к MySQL: " . mysqli_error());

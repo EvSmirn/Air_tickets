@@ -14,25 +14,25 @@
 				<preferredCurrency>RUB</preferredCurrency>
 				<skipConnected>false</skipConnected>
                                
-				<serviceClass></serviceClass>
+				<serviceClass>BUSINESS</serviceClass>
 				<route>
-                                    	<beginLocation></beginLocation>
-					<date>2017-10-12T03:00:00Z</date>
-					<endLocation></endLocation>
+                                    	<beginLocation>LED</beginLocation>
+					<date>2017-09-18</date>
+					<endLocation>MOW</endLocation>
                                 </route>
 				
 				<seats>
 					<entry>
 						<key>ADULT</key>
-						<value></value>
+						<value>1</value>
                                         </entry>
                                         <entry>
 						<key>CHILD</key>
-						<value></value>
+						<value>0</value>
 					</entry>
 					<entry>
 						<key>INFANT</key>
-						<value></value>
+						<value>0</value>
 					</entry>
 										
 				</seats>

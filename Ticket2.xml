@@ -1,8 +1,7 @@
-<?php
-$xmlstr = "
-<S:Envelope xmlns:S='http://schemas.xmlsoap.org/soap/envelope/'>
+<?xml version="1.0"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
 	<S:Body>
-		<ns2:searchFlights xmlns:ns2='http://partner.v3.webservice.berlogic.de/'>
+		<ns2:searchFlights xmlns:ns2="http://partner.v3.webservice.berlogic.de/">
 			<settings>
 				<agencyCode>pulkovoairport</agencyCode>
 				<salesPoint>pulkovoairport</salesPoint>
@@ -15,25 +14,25 @@ $xmlstr = "
 				<preferredCurrency>RUB</preferredCurrency>
 				<skipConnected>false</skipConnected>
                                
-				<serviceClass>".$s_serviceClass."</serviceClass>
+				<serviceClass>ECONOM</serviceClass>
 				<route>
-                                    	<beginLocation>".$s_beginLocation."</beginLocation>
-					<date>".$s_date."</date>
-					<endLocation>".$s_endLocation."</endLocation>
+                                    	<beginLocation>MOW</beginLocation>
+					<date>2017-09-18</date>
+					<endLocation>LED</endLocation>
                                 </route>
 				
 				<seats>
 					<entry>
 						<key>ADULT</key>
-						<value>".$s_adult."</value>
+						<value>1</value>
 					</entry>
                                         <entry>
 						<key>CHILD</key>
-						<value>".$s_child."</value>
+						<value>0</value>
 					</entry>
                                         <entry>
 						<key>INFANT</key>
-						<value>".$s_infant."</value>
+						<value>0</value>
 					</entry>
 					
 				</seats>
@@ -41,8 +40,3 @@ $xmlstr = "
 		</ns2:searchFlights>
 	</S:Body>
 </S:Envelope>
-";
-
-    // echo '<pre>';
-    // print_r($xmlstr);
-     //echo '</pre>';
